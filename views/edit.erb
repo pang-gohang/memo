@@ -9,7 +9,7 @@
   <body>
     <header><h1>メモアプリ</h1></header>
 
-  <form action="/new" method="post">
+  <form action="/<%= @memo_id %>/edit" method="post">
     <label for="subject">タイトル:</label>
     <input type="text" id="subject" name="subject" value="<%= @subject %>"required><br>
 
