@@ -12,7 +12,11 @@
     <div><%= @subject %></div>
     <div><%= @content %></div>
     <div><a href="/<%= @memo_id %>/edit">編集</a></div>
-    <div><a href="/<%= @memo_id %>/delete">削除</a></div>
+    <div>
+      <form action="/<%= @memo_id %>/delete" method="post">
+        <input type="submit" value="削除">
+      </form>
+    </div>
     <div><a href="/">もどる</a></div>
   </body>
 </html>
