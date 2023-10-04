@@ -44,9 +44,10 @@ post '/:memo_id/edit' do
   redirect "/#{@memo_id}"
 end
 
-get '/:memo_id/delete' do
+post '/:memo_id/delete' do
   @memo_id = params[:memo_id].to_i
-  erb :delete
+  memos.delete_if { |memo| memo["id"] == @memo_id }
+  redirect '/'
 end
 
 def edit_memo(subject, content, memo_id, memos)
