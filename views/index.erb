@@ -1,13 +1,22 @@
 <!DOCTYPE html>
+<html lang="ja">
 <html>
-<head>
-  <title>メモ帳アプリ</title>
-</head>
-<body>
-  <p>メモ帳の一覧: <%= @message %></p>
-  <li>
-    <a href="/1">メモ１</a>
-  </li>
-  <p><a href ='/new'>新規作成</a></p>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/style.css" />
+    <title>メモ帳アプリ</title>
+  </head>
+  <body>
+    <header><h1>メモアプリ</h1></header>
+    <div class="head-right">
+      <div><a href="/new">新規作成</a></div>
+    </div>
+    <ul>
+      <% @memos.each do |memo| %>
+      <li>
+        <%= memo['subject'].to_s %>
+      </li>
+      <% end %>
+    </ul>
+  </body>
 </html>
