@@ -4,15 +4,13 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/style.css" />
-    <% subject = @memos.find { |memo| memo['id'] == @memo_id }['subject'] %>
-    <% content = @memos.find { |memo| memo['id'] == @memo_id }['content'] %>
 
-  <title>メモ内容 <%= subject %></title>
+  <title>メモ内容 <%= @subject %></title>
   </head>
   <body>
     <header><h1>メモアプリ</h1></header>
-    <div><%= subject %></div>
-    <div><%= content %></div>
+    <div><%= @subject %></div>
+    <div><%= @content %></div>
     <div><a href="/<%= @memo_id %>/edit">編集</a></div>
     <div><a href="/<%= @memo_id %>/delete">削除</a></div>
     <div><a href="/">もどる</a></div>

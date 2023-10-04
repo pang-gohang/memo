@@ -11,10 +11,10 @@
 
   <form action="/new" method="post">
     <label for="subject">タイトル:</label>
-    <input type="text" id="subject" name="subject" required><br>
+    <input type="text" id="subject" name="subject" value="<%= @subject %>"required><br>
 
     <label for="content">内容:</label>
-    <textarea id="content" name="content" required></textarea><br>
+    <textarea id="content" name="content" required><%= @content %></textarea><br>
 
     <input type="submit" value="追加">
   </form>
