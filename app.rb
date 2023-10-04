@@ -22,12 +22,17 @@ end
 
 get '/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  @memos = memos
+  memo = memos.find { |memo| memo['id'] == @memo_id }
+  @subject = memo['subject']
+  @content = memo['content']
   erb :show
 end
 
 get '/:memo_id/edit' do
   @memo_id = params[:memo_id].to_i
+  memo = memos.find { |memo| memo['id'] == @memo_id }
+  @subject = memo['subject']
+  @content = memo['content']
   erb :edit
 end
 
