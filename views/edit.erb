@@ -4,14 +4,20 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/style.css" />
-    <title>メモ編集画面<%=@memo_id%></title>
+  <title>編集</title>
   </head>
   <body>
     <header><h1>メモアプリ</h1></header>
-    <form>
-      <div><input></div>
-      <div><textarea></textarea></div>
-    </form>
-    <div><a href="/">もどる</a></div>
+
+  <form action="/new" method="post">
+    <label for="subject">タイトル:</label>
+    <input type="text" id="subject" name="subject" required><br>
+
+    <label for="content">内容:</label>
+    <textarea id="content" name="content" required></textarea><br>
+
+    <input type="submit" value="追加">
+  </form>
+  <div><a href="/">もどる</a></div>
   </body>
 </html>
