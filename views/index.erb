@@ -14,7 +14,9 @@
     <ul>
       <% @memos.each do |memo| %>
       <li>
-        <%= memo['subject'].to_s %>
+        <a href="/<%= memo['id']%>">
+          <%= memo['subject'].to_s %>
+        </a>
       </li>
       <% end %>
     </ul>
