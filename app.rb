@@ -6,16 +6,17 @@ require 'json'
 memos = JSON.parse(File.read('data/memos.json'))
 
 get '/' do
-  @memos = memos # Rubyの変数を設定
-  erb :index # ERBテンプレートを使用してHTMLを生成
+  @memos = memos
+  erb :index
 end
 
 get '/new' do
-  erb :new # ERBテンプレートを使用してHTMLを生成
+  erb :new
 end
 
 get '/:memo_id' do
   @memo_id = params[:memo_id].to_i
+  @memos = memos
   erb :show
 end
 
