@@ -10,13 +10,13 @@
   <body>
     <header><h1>メモアプリ</h1></header>
     <div><%= @subject %></div>
-    <div><%= @content %></div>
-    <div><a href="/<%= @memo_id %>/edit">編集</a></div>
+    <div class="content"><%= @content %></div>
+    <div class="edit-link"><a href="/<%= @memo_id %>/edit">編集</a></div>
     <div>
-      <form action="/<%= @memo_id %>/delete" method="post">
+      <form action="/<%= @memo_id %>/delete" method="post" class="delete-form">
         <input type="submit" value="削除">
       </form>
     </div>
-    <div><a href="/">もどる</a></div>
+    <div class="back-link"><a href="/">もどる</a></div>
   </body>
 </html>
