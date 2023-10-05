@@ -4,6 +4,12 @@ require 'json'
 
 memos = JSON.parse(File.read('data/memos.json'))
 
+get '/style.css' do
+  content_type 'text/css'
+  # ここでCSSコンテンツを生成するコードを記述
+end
+
+
 get '/' do
   @memos = memos
   erb :index
