@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
@@ -34,7 +36,7 @@ end
 
 get '/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memo = memos.find { |memo| memo['id'] == @memo_id }
+  memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
   @subject = h(memo['subject'])
   @content = h(memo['content'])
   erb :show
@@ -42,7 +44,7 @@ end
 
 get '/:memo_id/edit' do
   @memo_id = params[:memo_id].to_i
-  memo = memos.find { |memo| memo['id'] == @memo_id }
+  memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
   @subject = h(memo['subject'])
   @content = h(memo['content'])
   erb :edit
@@ -58,29 +60,37 @@ end
 
 delete '/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memos.delete_if { |memo| memo["id"] == @memo_id }
+  memos.delete_if { |memo| memo['id'] == @memo_id }
   redirect '/'
 end
 
-def edit_memo(subject, content, memo_id, memos)
-  # memo_idが空の場合は新規作成
-  if memo_id.nil?
-    new_memo = {
-      "id": memos.map { |memo| memo["id"] }.max + 1,
-      "subject": subject,
-      "content": content
-    }
-    memos << new_memo.transform_keys(&:to_s)
-  else
-    memos.each do |memo|
-      if memo["id"] == memo_id
-        memo["subject"] = subject
-        memo["content"] = content
-        break  # 更新したらループを終了
-      end
-    end
+def create_new_memo(subject, content, memos)
+  new_memo = {
+    "id": memos.map { |memo| memo['id'] }.max + 1,
+    "subject": subject,
+    "content": content
+  }
+  memos << new_memo.transform_keys(&:to_s)
+end
+
+def edit_existing_memo(subject, content, memo_id, memos)
+  memos.each do |memo|
+    memo['subject'] = subject if memo['id'] == memo_id
+    memo['content'] = content if memo['id'] == memo_id
   end
+end
+
+def save_memos_to_file(memos)
   File.open('data/memos.json', 'w') do |file|
     file.write(JSON.pretty_generate(memos.map { |memo| memo.transform_keys(&:to_s) }))
   end
+end
+
+def edit_memo(subject, content, memo_id, memos)
+  if memo_id.nil?
+    create_new_memo(subject, content, memos)
+  else
+    edit_existing_memo(subject, content, memo_id, memos)
+  end
+  save_memos_to_file(memos)
 end
