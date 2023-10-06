@@ -23,7 +23,8 @@
         <button class="ui black basic button" onclick="location.href = '/'">戻る</button>
       </div>
     <div>
-      <form action="/<%= @memo_id %>/delete" method="post" class="delete-form">
+      <form action="/<%= @memo_id %>" method="post" class="delete-form">
+        <input type="hidden" name="_method" value="DELETE">
         <input class="ui black button" type="submit" value="削除">
       </form>
     </div>
