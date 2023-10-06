@@ -6,7 +6,7 @@ Sinatraを使用して作成したシンプルなメモ帳アプリです。こ�
 
 1. このリポジトリをクローンします:
 
-`git clone https://github.com/yourusername/sinatra-memo-app.git`
+`git clone https://github.com/pang-gohang/memo`
 
 2. リポジトリのディレクトリに移動します:
 
@@ -47,7 +47,7 @@ Sinatraを使用して作成したシンプルなメモ帳アプリです。こ�
 
 質問、提案、バグ報告などがある場合は、以下の連絡先情報を使用してお知らせください：
 
-- 開発者: pangohan (@pangohan)
+- 開発者: pang-gohang (@pang-gohang)
 
 ## ライセンス
 
