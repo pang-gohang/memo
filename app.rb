@@ -1,14 +1,20 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
+require 'rack'
 
 memos = JSON.parse(File.read('data/memos.json'))
 
-get '/style.css' do
-  content_type 'text/css'
-  # ここでCSSコンテンツを生成するコードを記述
+# HTMLエスケープ用
+helpers do
+  def h(text)
+    Rack::Utils.escape_html(text)
+  end
 end
 
+get '/style.css' do
+  content_type 'text/css'
+end
 
 get '/' do
   @memos = memos
@@ -20,8 +26,8 @@ get '/new' do
 end
 
 post '/new' do
-  subject = params['subject']
-  content = params['content']
+  subject = h(params['subject'])
+  content = h(params['content'])
   edit_memo(subject, content, nil, memos)
   redirect '/'
 end
@@ -29,23 +35,23 @@ end
 get '/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo| memo['id'] == @memo_id }
-  @subject = memo['subject']
-  @content = memo['content']
+  @subject = h(memo['subject'])
+  @content = h(memo['content'])
   erb :show
 end
 
 get '/:memo_id/edit' do
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo| memo['id'] == @memo_id }
-  @subject = memo['subject']
-  @content = memo['content']
+  @subject = h(memo['subject'])
+  @content = h(memo['content'])
   erb :edit
 end
 
 post '/:memo_id/edit' do
   @memo_id = params[:memo_id].to_i
-  subject = params['subject']
-  content = params['content']
+  subject = h(params['subject'])
+  content = h(params['content'])
   edit_memo(subject, content, @memo_id, memos)
   redirect "/#{@memo_id}"
 end
@@ -60,7 +66,7 @@ def edit_memo(subject, content, memo_id, memos)
   # memo_idが空の場合は新規作成
   if memo_id.nil?
     new_memo = {
-      "id": memos.length + 1,
+      "id": memos.map { |memo| memo["id"] }.max + 1,
       "subject": subject,
       "content": content
     }
