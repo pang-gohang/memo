@@ -12,20 +12,6 @@
     <title>メモアプリ</title>
   </head>
   <body>
-    <header><h1 class="title">メモアプリ</h1></header>
-    <div class="head-right">
-      <div class="new-link"><a href="/new">新規作成</a></div>
-    </div>
-    <ul>
-      <% @memos.each do |memo| %>
-      <li>
-        <a href="/<%= memo['id']%>">
-          <%= memo['subject'].to_s %>
-        </a>
-      </li>
-      <% end %>
-    </ul>
-
     <div class="ui container">
       <div></div>
     <div class="ui segment">
@@ -33,9 +19,7 @@
       <div class="ui clearing divider"></div>
         <table class="ui celled table">
           <caption>メモ一覧</caption>
-          <button class="ui black button">
-            新規作成
-          </button>
+          <button class="ui black button" onclick="location.href = '/new'">新規作成</button>
           <thead>
             <tr>
               <th>タイトル</th>
@@ -43,34 +27,21 @@
             </tr>
           </thead>
           <tbody>
+          <% @memos.each do |memo| %>
             <tr>
-              <td>オムライスの作り方</td>
-              <td><button class="ui black button">
-                編集
-              </button>
-              <button class="ui black basic button">
-                削除
-              </button>
-              </td>
-            </tr>
-            <tr>
-              <td>ゆで卵の作り方</td>
               <td>
-                <button class="ui black button">
-                  編集
-                </button>
-                <button class="ui black basic button">
-                  削除
-                </button>
+                <a href="/<%= memo['id']%>">
+                  <%= memo['subject'].to_s %>
+                </a>
+              </td>
+              <td>
+                <button class="ui black button" onclick="location.href = '/<%= memo['id'] %>/edit'">編集</button>
               </td>
             </tr>
+          <% end %>
           </tbody>
         </table>
       </div>
     </div>
-
-
-
-
   </body>
 </html>
