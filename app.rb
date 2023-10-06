@@ -84,5 +84,3 @@ def edit_memo(subject, content, memo_id, memos)
     file.write(JSON.pretty_generate(memos.map { |memo| memo.transform_keys(&:to_s) }))
   end
 end
-
-# bundle exec ruby app.rb
