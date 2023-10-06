@@ -81,7 +81,7 @@ def edit_memo(subject, content, memo_id, memos)
     end
   end
   File.open('data/memos.json', 'w') do |file|
-    file.write(JSON.pretty_generate(memos))
+    file.write(JSON.pretty_generate(memos.map { |memo| memo.transform_keys(&:to_s) }))
   end
 end
 
