@@ -48,7 +48,7 @@ get '/:memo_id/edit' do
   erb :edit
 end
 
-post '/:memo_id/edit' do
+patch '/:memo_id' do
   @memo_id = params[:memo_id].to_i
   subject = h(params['subject'])
   content = h(params['content'])
@@ -56,7 +56,7 @@ post '/:memo_id/edit' do
   redirect "/#{@memo_id}"
 end
 
-post '/:memo_id/delete' do
+delete '/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memos.delete_if { |memo| memo["id"] == @memo_id }
   redirect '/'
