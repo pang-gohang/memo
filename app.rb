@@ -28,8 +28,8 @@ get '/new' do
 end
 
 post '/new' do
-  subject = h(params['subject'])
-  content = h(params['content'])
+  subject = params['subject']
+  content = params['content']
   edit_memo(subject, content, nil, memos)
   redirect '/'
 end
@@ -52,8 +52,8 @@ end
 
 patch '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  subject = h(params['subject'])
-  content = h(params['content'])
+  subject = params['subject']
+  content = params['content']
   edit_memo(subject, content, @memo_id, memos)
   redirect "/memos/#{@memo_id}"
 end
