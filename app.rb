@@ -83,6 +83,7 @@ end
 delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memos.delete_if { |memo| memo['id'] == @memo_id }
+  save_memos_to_file(memos)
   redirect '/'
 end
 
