@@ -16,12 +16,12 @@
         <% @memos.each do |memo| %>
           <tr>
             <td>
-              <a href="/memos/<%= memo['id'] %>">
-                <%= h memo['subject'].to_s %>
+              <a href="/memos/<%= memo.id %>">
+                <%= h memo.subject %>
               </a>
             </td>
             <td>
-              <button class="ui black button" onclick="location.href = '/memos/<%= memo['id'] %>/edit'">編集</button>
+              <button class="ui black button" onclick="location.href = '/memos/<%= memo.id %>/edit'">編集</button>
             </td>
           </tr>
         <% end %>

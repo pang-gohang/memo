@@ -5,20 +5,33 @@ require 'sinatra/reloader'
 require 'json'
 require 'rack'
 
+class Memo
+  attr_accessor :id, :subject, :content
+
+  def initialize(id, subject, content)
+    @id = id
+    @subject = subject
+    @content = content
+  end
+end
+
+
 # ファイルが存在しない場合の初期データ
 initial_data = [
   { "id": 1, "subject": "サンプルメモ1", "content": "これはサンプルメモ1です。" },
   { "id": 2, "subject": "サンプルメモ2", "content": "これはサンプルメモ2です。" }
 ]
 
-# ファイルが存在しない場合に初期データを書き込む
-unless File.exist?('data/memos.json')
-  File.open('data/memos.json', 'w') do |file|
-    file.write(JSON.pretty_generate(initial_data))
-  end
-end
+memos = []
 
-memos = JSON.parse(File.read('data/memos.json'))
+# JSONファイルが存在する場合はJSONからデータを読み込む
+if File.exist?('data/memos.json')
+  memos_data = JSON.parse(File.read('data/memos.json'))
+  memos = memos_data.map { |data| Memo.new(data['id'], data['subject'], data['content']) }
+else
+  # ファイルが存在しない場合はinitial_dataを使用
+  memos = initial_data.map { |data| Memo.new(data[:id], data[:subject], data[:content]) }
+end
 
 # HTMLエスケープ用
 helpers do
@@ -47,20 +60,16 @@ end
 
 post '/new' do
   @title = '新規作成'
-  target_memo = {
-  'id' => nil,
-  'subject' => params['subject'],
-  'content' => params['content']
-  }
-  save_memos(memos, target_memo)
+  new_memo = Memo.new(nil, params['subject'], params['content'])
+  save_memos(memos, new_memo)
   redirect '/'
 end
 
 get '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
-  @subject = memo['subject']
-  @content = memo['content']
+  memo = memos.find { |memo_block| memo_block.id == @memo_id }
+  @subject = memo.subject
+  @content = memo.content
   @title = @subject
 
   erb :show
@@ -69,49 +78,56 @@ end
 get '/memos/:memo_id/edit' do
   @title = '編集'
   @memo_id = params[:memo_id].to_i
-  memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
-  @subject = memo['subject']
-  @content = memo['content']
+  memo = memos.find { |memo_block| memo_block.id == @memo_id }
+  @subject = memo.subject
+  @content = memo.content
   erb :edit
 end
 
 patch '/memos/:memo_id' do
-  target_memo = {
-  'id' => params[:memo_id].to_i,
-  'subject' => params['subject'],
-  'content' => params['content']
-  }
+  memo_id = params[:memo_id].to_i
+  target_memo = memos.find { |memo| memo.id == memo_id }
+  target_memo.subject = params['subject']
+  target_memo.content = params['content']
   save_memos(memos, target_memo)
-  redirect "/memos/#{target_memo['id']}"
+  redirect "/memos/#{target_memo.id}"
 end
+
 
 delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memos.delete_if { |memo| memo['id'] == @memo_id }
+  memos.delete_if { |memo| memo.id == @memo_id }
   persist_memos(memos)
   redirect '/'
 end
 
 def add_new_memo(memos, target_memo)
-  target_memo['id'] = memos.map { |memo| memo['id'] }.max + 1
-  memos << target_memo.transform_keys(&:to_s)
+  target_memo.id = memos.map { |memo| memo.id }.max + 1
+  memos << target_memo
 end
 
 def update_memo(memos, target_memo)
   memos.each do |memo|
-    memo['subject'] = target_memo['subject'] if memo['id'] == target_memo['id']
-    memo['content'] = target_memo['content'] if memo['id'] == target_memo['id']
+    memo.subject = target_memo.subject if memo.id == target_memo.id
+    memo.content = target_memo.content if memo.id == target_memo.id
   end
 end
 
 def persist_memos(memos)
+  save_file = memos.map do |memo|
+    {
+      'id' => memo.id,
+      'subject' => memo.subject,
+      'content' => memo.content
+    }
+  end
   File.open('data/memos.json', 'w') do |file|
-    file.write(JSON.pretty_generate(memos.map { |memo| memo.transform_keys(&:to_s) }))
+    file.write(JSON.pretty_generate(save_file.map { |file| file.transform_keys(&:to_s) }))
   end
 end
 
 def save_memos(memos, target_memo)
-  if target_memo['id'].nil?
+  if target_memo.id.nil?
     add_new_memo(memos, target_memo)
   else
     update_memo(memos, target_memo)
