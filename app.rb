@@ -24,6 +24,7 @@ end
 
 get '/' do
   @memos = memos
+  @title = 'メモアプリ'
   erb :index
 end
 
@@ -32,6 +33,7 @@ get '/new' do
 end
 
 post '/new' do
+  @title = '新規作成'
   subject = params['subject']
   content = params['content']
   edit_memo(subject, content, nil, memos)
@@ -43,10 +45,13 @@ get '/memos/:memo_id' do
   memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
   @subject = memo['subject']
   @content = memo['content']
+  @title = @subject
+
   erb :show
 end
 
 get '/memos/:memo_id/edit' do
+  @title = '編集'
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
   @subject = memo['subject']
