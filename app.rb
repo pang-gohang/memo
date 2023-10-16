@@ -76,11 +76,13 @@ get '/memos/:memo_id/edit' do
 end
 
 patch '/memos/:memo_id' do
-  @memo_id = params[:memo_id].to_i
-  subject = params['subject']
-  content = params['content']
-  save_memos(subject, content, @memo_id, memos)
-  redirect "/memos/#{@memo_id}"
+  target_memo = {
+  'id' => params[:memo_id].to_i,
+  'subject' => params['subject'],
+  'content' => params['content']
+  }
+  save_memos(memos, target_memo)
+  redirect "/memos/#{target_memo['id']}"
 end
 
 delete '/memos/:memo_id' do
@@ -95,10 +97,10 @@ def add_new_memo(memos, target_memo)
   memos << target_memo.transform_keys(&:to_s)
 end
 
-def update_memo(subject, content, memo_id, memos)
+def update_memo(memos, target_memo)
   memos.each do |memo|
-    memo['subject'] = subject if memo['id'] == memo_id
-    memo['content'] = content if memo['id'] == memo_id
+    memo['subject'] = target_memo['subject'] if memo['id'] == target_memo['id']
+    memo['content'] = target_memo['content'] if memo['id'] == target_memo['id']
   end
 end
 
@@ -112,7 +114,7 @@ def save_memos(memos, target_memo)
   if target_memo['id'].nil?
     add_new_memo(memos, target_memo)
   else
-    update_memo(subject, content, id, memos)
+    update_memo(memos, target_memo)
   end
   persist_memos(memos)
 end
