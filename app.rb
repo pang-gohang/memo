@@ -34,7 +34,7 @@ post '/new' do
   redirect '/'
 end
 
-get '/:memo_id' do
+get '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
   @subject = h(memo['subject'])
@@ -42,7 +42,7 @@ get '/:memo_id' do
   erb :show
 end
 
-get '/:memo_id/edit' do
+get '/memos/:memo_id/edit' do
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
   @subject = h(memo['subject'])
@@ -50,15 +50,15 @@ get '/:memo_id/edit' do
   erb :edit
 end
 
-patch '/:memo_id' do
+patch '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   subject = h(params['subject'])
   content = h(params['content'])
   edit_memo(subject, content, @memo_id, memos)
-  redirect "/#{@memo_id}"
+  redirect "/memos/#{@memo_id}"
 end
 
-delete '/:memo_id' do
+delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memos.delete_if { |memo| memo['id'] == @memo_id }
   redirect '/'

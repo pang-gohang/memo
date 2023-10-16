@@ -19,11 +19,11 @@
         <div class="ui clearing divider"></div>
         <div class="ui message"><h2><%= @subject %></h2></div>
         <div class="ui message"><%= @content %></div>
-        <button class="ui black button" onclick="location.href = '/<%= @memo_id %>/edit'">編集</button>
+        <button class="ui black button" onclick="location.href = '/memos/<%= @memo_id %>/edit'">編集</button>
         <button class="ui black basic button" onclick="location.href = '/'">戻る</button>
       </div>
     <div>
-      <form action="/<%= @memo_id %>" method="post" class="delete-form">
+      <form action="/memos/<%= @memo_id %>" method="post" class="delete-form">
         <input type="hidden" name="_method" value="DELETE">
         <input class="ui black button" type="submit" value="削除">
       </form>
