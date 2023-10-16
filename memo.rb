@@ -10,7 +10,7 @@ class Memo
   end
 
   def self.add_new_memo(memos, target_memo)
-    target_memo.id = memos.map { |memo| memo.id }.max + 1
+    target_memo.id = memos.map(&:id).max + 1
     memos << target_memo
   end
 
@@ -29,8 +29,8 @@ class Memo
         'content' => memo.content
       }
     end
-    File.open('data/memos.json', 'w') do |file|
-      file.write(JSON.pretty_generate(save_file.map { |file| file.transform_keys(&:to_s) }))
+    File.open('data/memos.json', 'w') do |output_file|
+      output_file.write(JSON.pretty_generate(save_file.map { |data| data.transform_keys(&:to_s) }))
     end
   end
 
