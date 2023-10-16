@@ -5,6 +5,19 @@ require 'sinatra/reloader'
 require 'json'
 require 'rack'
 
+# ファイルが存在しない場合の初期データ
+initial_data = [
+  { "id": 1, "subject": "サンプルメモ1", "content": "これはサンプルメモ1です。" },
+  { "id": 2, "subject": "サンプルメモ2", "content": "これはサンプルメモ2です。" }
+]
+
+# ファイルが存在しない場合に初期データを書き込む
+unless File.exist?('data/memos.json')
+  File.open('data/memos.json', 'w') do |file|
+    file.write(JSON.pretty_generate(initial_data))
+  end
+end
+
 memos = JSON.parse(File.read('data/memos.json'))
 
 # HTMLエスケープ用
