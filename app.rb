@@ -83,11 +83,11 @@ end
 delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memos.delete_if { |memo| memo['id'] == @memo_id }
-  save_memos_to_file(memos)
+  persist_memos(memos)
   redirect '/'
 end
 
-def create_new_memo(subject, content, memos)
+def add_new_memo(subject, content, memos)
   new_memo = {
     "id": memos.map { |memo| memo['id'] }.max + 1,
     "subject": subject,
@@ -96,14 +96,14 @@ def create_new_memo(subject, content, memos)
   memos << new_memo.transform_keys(&:to_s)
 end
 
-def edit_existing_memo(subject, content, memo_id, memos)
+def update_memo(subject, content, memo_id, memos)
   memos.each do |memo|
     memo['subject'] = subject if memo['id'] == memo_id
     memo['content'] = content if memo['id'] == memo_id
   end
 end
 
-def save_memos_to_file(memos)
+def persist_memos(memos)
   File.open('data/memos.json', 'w') do |file|
     file.write(JSON.pretty_generate(memos.map { |memo| memo.transform_keys(&:to_s) }))
   end
@@ -112,9 +112,9 @@ end
 # TODO def save_memos(memos, target_memo)
 def save_memos(subject, content, memo_id, memos)
   if memo_id.nil?
-    create_new_memo(subject, content, memos)
+    add_new_memo(subject, content, memos)
   else
-    edit_existing_memo(subject, content, memo_id, memos)
+    update_memo(subject, content, memo_id, memos)
   end
-  save_memos_to_file(memos)
+  persist_memos(memos)
 end
