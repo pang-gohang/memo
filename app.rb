@@ -4,50 +4,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
 require 'rack'
-
-class Memo
-  attr_accessor :id, :subject, :content
-
-  def initialize(id, subject, content)
-    @id = id
-    @subject = subject
-    @content = content
-  end
-
-  def self.add_new_memo(memos, target_memo)
-    target_memo.id = memos.map { |memo| memo.id }.max + 1
-    memos << target_memo
-  end
-
-  def self.update_memo(memos, target_memo)
-    memos.each do |memo|
-      memo.subject = target_memo.subject if memo.id == target_memo.id
-      memo.content = target_memo.content if memo.id == target_memo.id
-    end
-  end
-
-  def self.persist_memos(memos)
-    save_file = memos.map do |memo|
-      {
-        'id' => memo.id,
-        'subject' => memo.subject,
-        'content' => memo.content
-      }
-    end
-    File.open('data/memos.json', 'w') do |file|
-      file.write(JSON.pretty_generate(save_file.map { |file| file.transform_keys(&:to_s) }))
-    end
-  end
-
-  def self.save_memos(memos, target_memo)
-    if target_memo.id.nil?
-      add_new_memo(memos, target_memo)
-    else
-      update_memo(memos, target_memo)
-    end
-    persist_memos(memos)
-  end
-end
+require_relative 'memo'
 
 # ファイルが存在しない場合の初期データ
 initial_data = [
