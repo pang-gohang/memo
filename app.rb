@@ -12,6 +12,10 @@ helpers do
   def h(text)
     Rack::Utils.escape_html(text)
   end
+
+  def hattr(text)
+    Rack::Utils.escape_path(text)
+  end
 end
 
 get '/style.css' do
@@ -37,16 +41,16 @@ end
 get '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
-  @subject = h(memo['subject'])
-  @content = h(memo['content'])
+  @subject = memo['subject']
+  @content = memo['content']
   erb :show
 end
 
 get '/memos/:memo_id/edit' do
   @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo_block| memo_block['id'] == @memo_id }
-  @subject = h(memo['subject'])
-  @content = h(memo['content'])
+  @subject = memo['subject']
+  @content = memo['content']
   erb :edit
 end
 
