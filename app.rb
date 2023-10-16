@@ -47,9 +47,12 @@ end
 
 post '/new' do
   @title = '新規作成'
-  subject = params['subject']
-  content = params['content']
-  save_memos(subject, content, nil, memos)
+  target_memo = {
+  'id' => nil,
+  'subject' => params['subject'],
+  'content' => params['content']
+  }
+  save_memos(memos, target_memo)
   redirect '/'
 end
 
@@ -87,13 +90,9 @@ delete '/memos/:memo_id' do
   redirect '/'
 end
 
-def add_new_memo(subject, content, memos)
-  new_memo = {
-    "id": memos.map { |memo| memo['id'] }.max + 1,
-    "subject": subject,
-    "content": content
-  }
-  memos << new_memo.transform_keys(&:to_s)
+def add_new_memo(memos, target_memo)
+  target_memo['id'] = memos.map { |memo| memo['id'] }.max + 1
+  memos << target_memo.transform_keys(&:to_s)
 end
 
 def update_memo(subject, content, memo_id, memos)
@@ -109,12 +108,11 @@ def persist_memos(memos)
   end
 end
 
-# TODO def save_memos(memos, target_memo)
-def save_memos(subject, content, memo_id, memos)
-  if memo_id.nil?
-    add_new_memo(subject, content, memos)
+def save_memos(memos, target_memo)
+  if target_memo['id'].nil?
+    add_new_memo(memos, target_memo)
   else
-    update_memo(subject, content, memo_id, memos)
+    update_memo(subject, content, id, memos)
   end
   persist_memos(memos)
 end
