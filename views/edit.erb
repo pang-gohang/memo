@@ -22,11 +22,11 @@
             <input type="hidden" name="_method" value="PATCH">
             <div class="field">
               <label>タイトル</label>
-              <textarea id="subject" name="subject" required rows="2"><%= @subject %></textarea>
+              <textarea id="subject" name="subject" required rows="2"><%= h @subject %></textarea>
             </div>
             <div class="field">
               <label>内容</label>
-              <textarea id="content" name="content" required><%= @content %></textarea>
+              <textarea id="content" name="content" required><%= h @content %></textarea>
             </div>
             <td>
               <button input type="submit" value="追加" class="ui black button">
