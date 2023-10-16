@@ -4,22 +4,15 @@ Sinatraを使用して作成したシンプルなメモ帳アプリです。こ�
 
 ## インストール
 
-1. このリポジトリをクローンします:
+1. このリポジトリをクローンします:`git clone https://github.com/pang-gohang/memo`
 
-`git clone https://github.com/pang-gohang/memo`
+2. リポジトリのディレクトリに移動します:`cd memo`
 
-2. リポジトリのディレクトリに移動します:
+3. 依存関係をインストールします: `bundle install`
 
-`cd memo`
-
-3. 依存関係をインストールします:
-
-`bundle install`
 ## 使用方法
 
-1. アプリを起動します:
-
-`ruby app.rb`
+1. アプリを起動します:`ruby app.rb`
 
 2. ブラウザで `http://localhost:4567` にアクセスします。
 
