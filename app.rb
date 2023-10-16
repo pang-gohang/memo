@@ -13,13 +13,46 @@ class Memo
     @subject = subject
     @content = content
   end
-end
 
+  def self.add_new_memo(memos, target_memo)
+    target_memo.id = memos.map { |memo| memo.id }.max + 1
+    memos << target_memo
+  end
+
+  def self.update_memo(memos, target_memo)
+    memos.each do |memo|
+      memo.subject = target_memo.subject if memo.id == target_memo.id
+      memo.content = target_memo.content if memo.id == target_memo.id
+    end
+  end
+
+  def self.persist_memos(memos)
+    save_file = memos.map do |memo|
+      {
+        'id' => memo.id,
+        'subject' => memo.subject,
+        'content' => memo.content
+      }
+    end
+    File.open('data/memos.json', 'w') do |file|
+      file.write(JSON.pretty_generate(save_file.map { |file| file.transform_keys(&:to_s) }))
+    end
+  end
+
+  def self.save_memos(memos, target_memo)
+    if target_memo.id.nil?
+      add_new_memo(memos, target_memo)
+    else
+      update_memo(memos, target_memo)
+    end
+    persist_memos(memos)
+  end
+end
 
 # ファイルが存在しない場合の初期データ
 initial_data = [
-  { "id": 1, "subject": "サンプルメモ1", "content": "これはサンプルメモ1です。" },
-  { "id": 2, "subject": "サンプルメモ2", "content": "これはサンプルメモ2です。" }
+  { "id": 1, "subject": 'サンプルメモ1', "content": 'これはサンプルメモ1です。' },
+  { "id": 2, "subject": 'サンプルメモ2', "content": 'これはサンプルメモ2です。' }
 ]
 
 memos = []
@@ -61,7 +94,7 @@ end
 post '/new' do
   @title = '新規作成'
   new_memo = Memo.new(nil, params['subject'], params['content'])
-  save_memos(memos, new_memo)
+  Memo.save_memos(memos, new_memo)
   redirect '/'
 end
 
@@ -89,48 +122,13 @@ patch '/memos/:memo_id' do
   target_memo = memos.find { |memo| memo.id == memo_id }
   target_memo.subject = params['subject']
   target_memo.content = params['content']
-  save_memos(memos, target_memo)
+  Memo.save_memos(memos, target_memo)
   redirect "/memos/#{target_memo.id}"
 end
-
 
 delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   memos.delete_if { |memo| memo.id == @memo_id }
-  persist_memos(memos)
+  Memo.persist_memos(memos)
   redirect '/'
-end
-
-def add_new_memo(memos, target_memo)
-  target_memo.id = memos.map { |memo| memo.id }.max + 1
-  memos << target_memo
-end
-
-def update_memo(memos, target_memo)
-  memos.each do |memo|
-    memo.subject = target_memo.subject if memo.id == target_memo.id
-    memo.content = target_memo.content if memo.id == target_memo.id
-  end
-end
-
-def persist_memos(memos)
-  save_file = memos.map do |memo|
-    {
-      'id' => memo.id,
-      'subject' => memo.subject,
-      'content' => memo.content
-    }
-  end
-  File.open('data/memos.json', 'w') do |file|
-    file.write(JSON.pretty_generate(save_file.map { |file| file.transform_keys(&:to_s) }))
-  end
-end
-
-def save_memos(memos, target_memo)
-  if target_memo.id.nil?
-    add_new_memo(memos, target_memo)
-  else
-    update_memo(memos, target_memo)
-  end
-  persist_memos(memos)
 end
