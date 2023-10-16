@@ -49,7 +49,7 @@ post '/new' do
   @title = '新規作成'
   subject = params['subject']
   content = params['content']
-  edit_memo(subject, content, nil, memos)
+  save_memos(subject, content, nil, memos)
   redirect '/'
 end
 
@@ -76,7 +76,7 @@ patch '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
   subject = params['subject']
   content = params['content']
-  edit_memo(subject, content, @memo_id, memos)
+  save_memos(subject, content, @memo_id, memos)
   redirect "/memos/#{@memo_id}"
 end
 
@@ -109,7 +109,8 @@ def save_memos_to_file(memos)
   end
 end
 
-def edit_memo(subject, content, memo_id, memos)
+# TODO def save_memos(memos, target_memo)
+def save_memos(subject, content, memo_id, memos)
   if memo_id.nil?
     create_new_memo(subject, content, memos)
   else
