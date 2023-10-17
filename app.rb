@@ -44,11 +44,11 @@ get '/' do
   erb :index
 end
 
-get '/new' do
+get '/memos/new' do
   erb :new
 end
 
-post '/new' do
+post '/memos/new' do
   @title = '新規作成'
   new_memo = Memo.new(nil, params['subject'], params['content'])
   Memo.save_memos(memos, new_memo)
