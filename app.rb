@@ -39,6 +39,10 @@ get '/style.css' do
 end
 
 get '/' do
+  redirect '/memos'
+end
+
+get '/memos' do
   @memos = memos
   @title = 'メモアプリ'
   erb :index
@@ -48,7 +52,7 @@ get '/memos/new' do
   erb :new
 end
 
-post '/memos/new' do
+post '/memos' do
   @title = '新規作成'
   new_memo = Memo.new(nil, params['subject'], params['content'])
   Memo.save_memos(memos, new_memo)
