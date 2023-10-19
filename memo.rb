@@ -11,7 +11,8 @@ class Memo
 
   def self.add_new_memo(memos, target_memo)
     target_memo.id = memos.empty? ? 1 : memos.map(&:id).max + 1
-    memos << target_memo end
+    memos << target_memo
+  end
 
   def self.update_memo(memos, target_memo)
     memos.each do |memo|
