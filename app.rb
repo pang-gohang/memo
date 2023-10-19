@@ -6,22 +6,10 @@ require 'json'
 require 'rack'
 require_relative 'memo'
 
-# ファイルが存在しない場合の初期データ
-initial_data = [
-  { "id": 1, "subject": 'サンプルメモ1', "content": 'これはサンプルメモ1です。' },
-  { "id": 2, "subject": 'サンプルメモ2', "content": 'これはサンプルメモ2です。' }
-]
-
 memos = []
 
-# JSONファイルが存在する場合はJSONからデータを読み込む
-if File.exist?('data/memos.json')
-  memos_data = JSON.parse(File.read('data/memos.json'))
-  memos = memos_data.map { |data| Memo.new(data['id'], data['subject'], data['content']) }
-else
-  # ファイルが存在しない場合はinitial_dataを使用
-  memos = initial_data.map { |data| Memo.new(data[:id], data[:subject], data[:content]) }
-end
+memos_data = JSON.parse(File.read('data/memos.json'))
+memos = memos_data.map { |data| Memo.new(data['id'], data['subject'], data['content']) } if !memos_data.empty?
 
 # HTMLエスケープ用
 helpers do
