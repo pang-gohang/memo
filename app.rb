@@ -5,43 +5,9 @@ require 'sinatra/reloader'
 require 'json'
 require 'rack'
 require_relative 'memo'
-require 'pg'
+require_relative 'db'
 
-# データベース接続情報を設定
-db_params = {
-  host: 'localhost',      # ホスト名
-  port: 5432,             # ポート番号
-  dbname: 'memo_db',      # データベース名
-  user: 'yoshinori', # データベースユーザー名
-  password: 'hoehoe' # パスワード
-}
-
-# データベースから読み込み。JSON形式へ
-def fetch_db(db_params)
-  memos = []
-
-  begin
-    # データベースに接続
-    connection = PG.connect(db_params)
-    # テーブルからデータを取得
-    result = connection.exec('SELECT * FROM memos')
-    # 取得したデータをmemosに格納
-    result.each do |row|
-      memos << {
-        'id' => row['id'],
-        'subject' => row['subject'],
-        'content' => row['content']
-      }
-    end
-  rescue PG::Error => e
-    puts "データベースエラー: #{e.message}"
-  ensure
-    connection.close if connection
-  end
-  memos
-end
-
-memos_data = fetch_db(db_params)
+memos_data = fetch_db
 # JSONからMemoクラスオブジェクトへ
 memos = memos_data.map { |data| Memo.new(data['id'], data['subject'], data['content']) } if !memos_data.empty?
 

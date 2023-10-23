@@ -9,7 +9,7 @@ class Memo
     @content = content
   end
 
-  def self.add_new_memo(memos, target_memo)
+   def self.add_new_memo(memos, target_memo)
     target_memo.id = memos.empty? ? 1 : memos.map(&:id).max + 1
     memos << target_memo
   end
