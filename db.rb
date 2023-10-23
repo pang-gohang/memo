@@ -52,5 +52,9 @@ def add_memo(new_memo)
   ensure
     conn.close if conn
   end
-  memos = fetch_db
+end
+
+def delete_memo(memo_id)
+  conn = PG.connect(DB_PARAMS)
+  conn.exec_params('DELETE FROM memos WHERE id = $1', [memo_id])
 end

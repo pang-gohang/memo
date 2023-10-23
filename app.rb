@@ -76,7 +76,7 @@ end
 
 delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memos.delete_if { |memo| memo.id.to_i == @memo_id }
-  Memo.persist_memos(memos)
+  delete_memo(@memo_id)
+  memos = fetch_db
   redirect '/'
 end
