@@ -2,7 +2,6 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
 require 'rack'
 require_relative 'memo'
 require_relative 'db'
@@ -47,7 +46,7 @@ post '/memos' do
 end
 
 get '/memos/:memo_id' do
-  @memo_id = p params[:memo_id].to_i
+  @memo_id = params[:memo_id].to_i
   memo = memos.find { |memo_block| memo_block.id.to_i == @memo_id }
   @subject = memo.subject
   @content = memo.content
@@ -70,7 +69,8 @@ patch '/memos/:memo_id' do
   target_memo = memos.find { |memo| memo.id.to_i == memo_id }
   target_memo.subject = params['subject']
   target_memo.content = params['content']
-  Memo.save_memos(memos, target_memo)
+  save_memos(target_memo)
+  memos = fetch_db
   redirect "/memos/#{target_memo.id}"
 end
 

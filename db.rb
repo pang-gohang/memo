@@ -10,18 +10,19 @@ DB_PARAMS = {
   dbname: 'memo_db',      # データベース名
   user: 'yoshinori', # データベースユーザー名
   password: 'hoehoe' # パスワード
-}
+}.freeze
+
+def close_connection(connection)
+  connection&.close
+end
 
 # データベースから読み込み。JSON形式へ
 def fetch_db
   memos = []
 
+  connection = PG.connect(DB_PARAMS)
   begin
-    # データベースに接続
-    connection = PG.connect(DB_PARAMS)
-    # テーブルからデータを取得
     result = connection.exec('SELECT * FROM memos')
-    # 取得したデータをmemosに格納
     result.each do |row|
       memos << {
         'id' => row['id'],
@@ -29,32 +30,35 @@ def fetch_db
         'content' => row['content']
       }
     end
-  rescue PG::Error => e
-    puts "データベースエラー: #{e.message}"
   ensure
-    connection.close if connection
+    close_connection(connection)
   end
-  # JSONからMemoクラスオブジェクトへ
   memos.map { |data| Memo.new(data['id'], data['subject'], data['content']) } if !memos.empty?
 end
 
 def add_memo(new_memo)
+  connection = PG.connect(DB_PARAMS)
   begin
-    # データベースに接続
-    conn = PG.connect(DB_PARAMS)
-
-    # 新しいメモをデータベースに挿入
-    conn.exec_params('INSERT INTO memos (subject, content) VALUES ($1, $2)', [new_memo.subject, new_memo.content])
-
-    puts '新しいメモをデータベースに挿入しました'
-  rescue PG::Error => e
-    puts "データベースエラー: #{e.message}"
+    connection.exec_params('INSERT INTO memos (subject, content) VALUES ($1, $2)', [new_memo.subject, new_memo.content])
   ensure
-    conn.close if conn
+    close_connection(connection)
   end
 end
 
 def delete_memo(memo_id)
-  conn = PG.connect(DB_PARAMS)
-  conn.exec_params('DELETE FROM memos WHERE id = $1', [memo_id])
+  connection = PG.connect(DB_PARAMS)
+  begin
+    connection.exec_params('DELETE FROM memos WHERE id = $1', [memo_id])
+  ensure
+    close_connection(connection)
+  end
+end
+
+def save_memos(target_memo)
+  connection = PG.connect(DB_PARAMS)
+  begin
+    connection.exec_params('UPDATE memos SET subject = $1, content = $2 WHERE id = $3', [target_memo.subject, target_memo.content, target_memo.id])
+  ensure
+    close_connection(connection)
+  end
 end
