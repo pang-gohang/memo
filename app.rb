@@ -2,14 +2,11 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
 require 'rack'
 require_relative 'memo'
+require_relative 'db'
 
-memos = []
-
-memos_data = JSON.parse(File.read('data/memos.json'))
-memos = memos_data.map { |data| Memo.new(data['id'], data['subject'], data['content']) } if !memos_data.empty?
+memos = fetch_db
 
 # HTMLエスケープ用
 helpers do
@@ -43,13 +40,14 @@ end
 post '/memos' do
   @title = '新規作成'
   new_memo = Memo.new(nil, params['subject'], params['content'])
-  Memo.save_memos(memos, new_memo)
+  add_memo(new_memo)
+  memos = fetch_db
   redirect '/'
 end
 
 get '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memo = memos.find { |memo_block| memo_block.id == @memo_id }
+  memo = memos.find { |memo_block| memo_block.id.to_i == @memo_id }
   @subject = memo.subject
   @content = memo.content
   @title = @subject
@@ -60,7 +58,7 @@ end
 get '/memos/:memo_id/edit' do
   @title = '編集'
   @memo_id = params[:memo_id].to_i
-  memo = memos.find { |memo_block| memo_block.id == @memo_id }
+  memo = memos.find { |memo_block| memo_block.id.to_i == @memo_id }
   @subject = memo.subject
   @content = memo.content
   erb :edit
@@ -68,16 +66,17 @@ end
 
 patch '/memos/:memo_id' do
   memo_id = params[:memo_id].to_i
-  target_memo = memos.find { |memo| memo.id == memo_id }
+  target_memo = memos.find { |memo| memo.id.to_i == memo_id }
   target_memo.subject = params['subject']
   target_memo.content = params['content']
-  Memo.save_memos(memos, target_memo)
+  save_memos(target_memo)
+  memos = fetch_db
   redirect "/memos/#{target_memo.id}"
 end
 
 delete '/memos/:memo_id' do
   @memo_id = params[:memo_id].to_i
-  memos.delete_if { |memo| memo.id == @memo_id }
-  Memo.persist_memos(memos)
+  delete_memo(@memo_id)
+  memos = fetch_db
   redirect '/'
 end
