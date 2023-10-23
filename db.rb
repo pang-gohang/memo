@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pg'
+require_relative 'memo'
 
 # データベース接続情報を設定
 DB_PARAMS = {
@@ -33,5 +34,23 @@ def fetch_db
   ensure
     connection.close if connection
   end
-  memos
+  # JSONからMemoクラスオブジェクトへ
+  memos.map { |data| Memo.new(data['id'], data['subject'], data['content']) } if !memos.empty?
+end
+
+def add_memo(new_memo)
+  begin
+    # データベースに接続
+    conn = PG.connect(DB_PARAMS)
+
+    # 新しいメモをデータベースに挿入
+    conn.exec_params('INSERT INTO memos (subject, content) VALUES ($1, $2)', [new_memo.subject, new_memo.content])
+
+    puts '新しいメモをデータベースに挿入しました'
+  rescue PG::Error => e
+    puts "データベースエラー: #{e.message}"
+  ensure
+    conn.close if conn
+  end
+  memos = fetch_db
 end

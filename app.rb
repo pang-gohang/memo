@@ -7,9 +7,7 @@ require 'rack'
 require_relative 'memo'
 require_relative 'db'
 
-memos_data = fetch_db
-# JSONからMemoクラスオブジェクトへ
-memos = memos_data.map { |data| Memo.new(data['id'], data['subject'], data['content']) } if !memos_data.empty?
+memos = fetch_db
 
 # HTMLエスケープ用
 helpers do
@@ -43,7 +41,8 @@ end
 post '/memos' do
   @title = '新規作成'
   new_memo = Memo.new(nil, params['subject'], params['content'])
-  Memo.save_memos(memos, new_memo)
+  add_memo(new_memo)
+  memos = fetch_db
   redirect '/'
 end
 
